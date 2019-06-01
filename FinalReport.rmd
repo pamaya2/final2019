@@ -1,45 +1,203 @@
 ---
 title: "Aides Drug"
-author: "Put your name here!"
-date: "put the date here"
+author: "Perla Amaya"
+date: "may 11,2019 "
 output: html_document
 ---
 
 ```{r include=FALSE,echo=FALSE}
 require(tidyverse)
 require(tigerstats)
+require(dplyr)
+require(chisqtestGC)
+require(barchartGC)
 avast <-read.csv(file="avastivironal.csv",header=TRUE)
+avastIV <- filter(avast, Ivdrug=="user")
+avastLBGT <- filter(avast, LBGT=="Yes")
+avastF <- filter(avast, sex=="F")
+avastM <- filter(avast, sex=="M")
 ```
 
 # Introduction
 
 <!--In this section you explain what you are trying to show.  Where did the data come from?  What is the research or other question you are trying to answer?.  If you skimp in this section expect to be marked down in your grade. Paint a picture of the project a couple of paragraphs is expected!-->
 
-A new  preventative aides (abacavirinol) is under test in clinical trials. Analyze the effectiveness of this drug across the board. Consider population subgroups by gender, drug use, and sexual orientation. Finish this!
+A new  preventative aides (abacavirinol) is under test in clinical trials. Analyze the effectiveness of this drug across the board. Consider population subgroups by gender, drug use, and sexual orientation.
+
+The first question is this: does abacavirinol have any affect on whether one contracts AIDS or not?
+
+$H_0:$ abacavirinol has no effect on whether one contracts AIDS or not  
+
+$H_1:$ abacavirinol has an effect on whether one contracts AIDS or not
+
+The remaining questions are: does abacavirinol have a different effect based on gender, drug use and sexual orientation
+
+$H_0:$ abacavirinol has no effect on whether one is female or male  
+
+$H_1:$ abacavirinol has an effect on whether one is female or male
+
+
+$H_0:$ abacavirinol has no effect on whether one uses drugs or not
+
+$H_1:$ abacavirinol has an effect on whether one uses drugs or not
+
+$H_0:$ abacavirinol has no effect on ones sexual orientation 
+
+$H_1:$ abacavirinol has an effect on ones sexual orientation
 
 # Methods
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method. Discuss what data manipulations may be needed for example subsetting or other binning procedures and what sort of graphical displays and inferential tools will be used!-->
 
-#Results
+For each hypothesis test the graphical summary will be a bar plot, the numerical summary will be a cross tabulation, and chi-squared test will be used for the inferential results.
+
+#Results General Effectivness
+Is the vaccine effective in the general population
 
 <!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
 
-## Descriptive Results
 
+
+## Descriptive Results
+the chart is showing that all the subjects did not have the infection. this is to show that they are starting with a clean test group and will check back in two years in the general population it is effective because in the chart you can see that the one group that did take the drug was less likey to contract the aids.The subjects that where given the placebo they ened up with the higher number of subjects that contracted the aids. the tables show that it is was a 0.716 difffrence of you getting aids wether you took the drug or not. 
 ### Graphical Descriptive Results
 
 <!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+```{r}
+barchartGC(~infected+treatment, data=avast, type='percent')
+```
 
 ### Numerical Descriptive Results
 
 <!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
 
+```{r}
+gentable = xtabs(~treatment+infected, data=avast)
+rowPerc(gentable)
+colPerc(gentable)
+```
+
+
 ## Inferential Results
 
 <!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
 
+```{r}
+chisqtestGC(~treatment+infected, data=avast)
+fisher.test(gentable)
+```
+
+
+#Results Gender Effects
+Does gender have an effect on vaccine effectivness
+
+<!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
+
+## Descriptive Results
+the drug increases the chance of developing aids if a female takes the drug. The females that took the drug where more likely to contract aids. they had more then a 1.543 chance of getting aids. That number is way to hight considering that its only in females that this happened. As you can see that gender does have an effect on the vaccine effectiveness. as you can see the male subjects where way less likely to have contracted aids. the graphs and charts show that these to genders where at two different spectrums. Not having to consider the other factors that could have made them get the aids there is  significant amount of females that did get aids and males who did not. 
+### Graphical Descriptive Results
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+```{r}
+barchartGC(~infected+treatment, data=avastF, type='percent')
+```
+```{r}
+barchartGC(~infected+treatment, data=avastM, type='percent')
+```
+
+
+### Numerical Descriptive Results
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+```{r}
+gentable = xtabs(~treatment+infected, data=avastF)
+rowPerc(gentable)
+colPerc(gentable)
+```
+```{r}
+gentable = xtabs(~treatment+infected, data=avastM)
+rowPerc(gentable)
+colPerc(gentable)
+```
+
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+```{r}
+chisqtestGC(~treatment+infected, data=avastF)
+fisher.test(gentable)
+```
+```{r}
+chisqtestGC(~treatment+infected, data=avastM)
+fisher.test(gentable)
+```
+
+#Results Drug Use Effects
+
+does doing drugs have an effect of vaccine effectiveness?
+
+<!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
+
+## Descriptive Results
+the results show that the drug does have an effectivness in the subjects that took the drug. the people who did take the drug had a higher chance to get aids. so this means that in overall taking the drug is way more effective in getting aids. the IV was an even more clear test because it was really obviouse to see from the charts that the IV was more pron to getting aids. the p-value showed that it was a 2.33 and that it was way to affective of getting aids and not nessessaraly trying to not get aids. 
+### Graphical Descriptive Results
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+```{r}
+barchartGC(~infected+treatment, data=avastIV, type='percent')
+```
+
+
+### Numerical Descriptive Results
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+```{r}
+gentable = xtabs(~treatment+infected, data=avastIV)
+rowPerc(gentable)
+colPerc(gentable)
+```
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+```{r}
+chisqtestGC(~treatment+infected, data=avastIV)
+fisher.test(gentable)
+```
+
+#Results Sexual Orientation Effects
+
+Does sexual orientation effect the vaccine effectivness?
+
+<!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
+
+## Descriptive Results
+With this study you can not tell wether or not your sexuality has an effectiveness to the vaccine. there was no subjuects to the experiment so this question can not be answered only if ur straight can this be answered because they did do that study with subjects that where male and felmales. 
+### Graphical Descriptive Results
+
+<!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+```{r}
+barchartGC(~infected+treatment, data=avastLBGT, type='percent')
+```
+
+### Numerical Descriptive Results
+
+<!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+```{r}
+gentable = xtabs(~treatment+infected, data=avastLBGT)
+rowPerc(gentable)
+colPerc(gentable)
+```
+
+## Inferential Results
+
+<!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+no chisqtestGC or fisher.test because there has to be at least one entry of 'x' to have those test ran.
 
 # Discussion and Conclusion
-
+the studies they did help people see that the vacinne overall is not effectiveness. most of the subjects where specific like female and male so that was a really broad group and not enough specifics with those subjects because there was no LBGT study. maybe some of those people could have been within that group but we just do not know. the charts give us visuals and the test done gave us percentages and determine the effectiveness of the test. 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
+
